@@ -26,6 +26,17 @@ services:
     volumes:
       - ./data/qdrant_storage:/qdrant/storage
 
+  influx:
+    container_name: influxdb
+    image: influx:latest
+    ports:
+      - "8086:8086"
+    restart: on-failure
+    networks:
+      - db_network
+    env_file:
+      - .env
+
   neo4j:
     container_name: neo4j
     image: neo4j:latest

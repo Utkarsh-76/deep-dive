@@ -6,10 +6,18 @@ from src.db.helpers.graph import GraphDB
 
 graph = GraphDB()
 
+
+class Generic(StructuredNode):
+    uid = UniqueIdProperty()
+    name = StringProperty(unique_index=True, required=True)
+    description = StringProperty(unique_index=True)
+
+
 class DocumentChunks(StructuredNode):
     """ create the chunk nodes """
     uid = UniqueIdProperty()
     data = StringProperty(unique_index=True)
+    generic = graph.create_relationship_to(Generic, "HAS_MANY")
 
     def to_json(self):
         """ convert the result to json"""
@@ -23,6 +31,7 @@ class Machines(StructuredNode):
     type = StringProperty(unique_index=True, required=True)
     manufacturer = StringProperty(unique_index=True, required=True)
     description = StringProperty(unique_index=True)
+    generic = graph.create_relationship_to(Generic, "HAS_MANY")
 
 
 class Documents(StructuredNode):
@@ -31,6 +40,7 @@ class Documents(StructuredNode):
     name = StringProperty(unique_index=True, required=True)
     description = StringProperty(unique_index=True)
     chunks = graph.create_relationship_to(DocumentChunks, "HAS_MANY")
+    generic = graph.create_relationship_to(Generic, "HAS_MANY")
 
     def to_json(self):
         """ covert the document  metadata to json"""
@@ -48,6 +58,7 @@ class Prompt(StructuredNode):
     text = StringProperty(unique_index=True, required=True)
     description = StringProperty(unique_index=True)
     document = graph.create_relationship_to(Documents, "HAS_MANY")
+    generic = graph.create_relationship_to(Generic, "HAS_MANY")
 
 
 class SubProcess(StructuredNode):
@@ -56,6 +67,7 @@ class SubProcess(StructuredNode):
     name = StringProperty(unique_index=True, required=True)
     description = StringProperty(unique_index=True)
     document = graph.create_relationship_to(Documents, "HAS_A")
+    generic = graph.create_relationship_to(Generic, "HAS_MANY")
 
 
 class Process(StructuredNode):
@@ -65,6 +77,7 @@ class Process(StructuredNode):
     description = StringProperty(unique_index=True)
     subprocess = graph.create_relationship_to(SubProcess, "HAS_A")
     machine = graph.create_relationship_to(Machines, "HAS_A")
+    generic = graph.create_relationship_to(Generic, "HAS_MANY")
 
 
 class Subject(StructuredNode):
@@ -73,6 +86,7 @@ class Subject(StructuredNode):
     name = StringProperty(unique_index=True, required=True)
     description = StringProperty(unique_index=True)
     process = graph.create_relationship_to(Process, "HAS_A")
+    generic = graph.create_relationship_to(Generic, "HAS_MANY")
 
 
 class Topic(StructuredNode):
@@ -81,9 +95,4 @@ class Topic(StructuredNode):
     name = StringProperty(unique_index=True, required=True)
     description = StringProperty(unique_index=True)
     subject = graph.create_relationship_to(Subject, "HAS_A")
-
-
-class Generic(StructuredNode):
-    uid = UniqueIdProperty()
-    name = StringProperty(unique_index=True, required=True)
-    description = StringProperty(unique_index=True)
+    generic = graph.create_relationship_to(Generic, "HAS_MANY")

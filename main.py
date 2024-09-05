@@ -51,6 +51,8 @@ producer = confluent_kafka.Producer(producer_conf)
 if quadrant.check_collection_exists("prompts") is not False:
     quadrant.create_collection("prompts")
 
+graph.execute_query("MATCH (n) DETACH DELETE n")
+
 # create the nodes
 SubProcess = graph.create_node(SubProcess)
 Machines = graph.create_node(Machines)
@@ -262,6 +264,8 @@ async def create_node(request: CreateNodeRequest):
                 current_node.machines.connect(new_node)
             elif request.node_type == 'document_chunks':
                 current_node.document_chunks.connect(new_node)
+            elif request.node_type == 'generic':
+                current_node.generic.connect(new_node)
             else:
                 raise Exception("node type not acceptable")
 

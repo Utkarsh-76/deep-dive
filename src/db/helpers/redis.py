@@ -89,6 +89,7 @@ class RedisDB:
 
     def create_index(self, vector_dimensions: int):
         """ this function is used to create the index on redis dbs """
+        self.client.ft("prompt_completion").dropindex()
         logger.info(f"creating index {INDEX_NAME} in redis")
         try:
             schema = (
